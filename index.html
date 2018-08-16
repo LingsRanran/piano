@@ -7,5 +7,124 @@
   <body>
     <app></app>
     <!-- built files will be auto injected -->
+    <span id="my_play_btn">点我播放</span>
+    <style type="text/css">
+      #my_play_btn{
+          display: block;
+        border: solid 1px grey;
+        margin: 10px auto;
+        width: 100px;
+        height: 50px;
+        border-radius: 25px;
+        cursor: pointer;
+        text-align: center;
+        line-height: 50px;
+        background-color: rgb(171, 88, 173);
+        font-weight: bold;
+        color: white;
+      }
+    </style>
   </body>
+  <script type="text/javascript">
+
+      window.onload = function(){
+          const YOUHEBUKE = [[0,1],[1,2],[2,1],[3],[0,1],[1,2],[2,1],[5],[0,5],[5,6],[6,5],['1+'],[0,'1+'],['1+',7],[6,7],[5],[0,5],[5,3],[3,2],[1],[0,1],[1,2],[2,1],[3,5],[5,3],[1],[1,1],[2,[2,1]],[1,1],[1,['6-',3]],[3,3]];
+
+          const mucToBtn = {
+              '1' : 36,
+              '2' : 38,
+              '3' : 40,
+              '4' : 41,
+              '5' : 43,
+              '6' : 45,
+              '7' : 47,
+              '7-' : 35,
+              '5-' : 31,
+              '1+' : 48,
+              '6-' : 33,
+              '0' : 100
+          }
+
+          function readArr(arr){
+              let result = [];
+
+              for (let i = 0; i < arr.length; i++) {
+                  const element = arr[i];
+
+                let time = (i % 4 === 0)? ( ONE_P_TIME + 100) : ONE_P_TIME;
+
+                  if(element.length === 1 || typeof element === 'string'){
+                      
+                      result.push({
+                          v : element[0],
+                          t : time
+                      })
+                  } else {
+                      for (let j = 0; j < element.length; j++) {
+                          const ele = element[j];
+                              if(j === 0){
+                                  time = (i % 4 === 0)? ( ONE_P_TIME + 100) : ONE_P_TIME;
+                              } else {
+                                  time = ONE_P_TIME / element.length;
+                              }
+                          if(typeof ele === 'number' || typeof ele === 'string'){
+                             
+                            result.push({
+                                v : ele,
+                                t : time
+                            })
+                          } else {
+                              for (let k = 0; k < ele.length; k++) {
+                                if(j === 0){
+                                    time =(i % 4 === 0)? ( ONE_P_TIME + 100) : ONE_P_TIME / element.length;
+                                } else {
+                                    time = ONE_P_TIME / element.length / ele.length;
+                                }
+                                result.push({
+                                    v : ele[k],
+                                    t : time
+                                })
+                              }
+                          }
+                      }
+                  }
+              }
+
+              return result;
+          }
+
+          const ONE_P_TIME = 350;
+
+          const playBtn = document.getElementById('my_play_btn');
+          const pianoBtn = document.getElementsByTagName('button');
+
+          const evt = document.createEvent('HTMLEvents');
+          evt.initEvent('click' , true , true);
+
+          playBtn.onclick = function(){
+             let playList = [{"v":0,"t":450},{"v":1,"t":175},{"v":1,"t":350},{"v":2,"t":175},{"v":2,"t":350},{"v":1,"t":175},{"v":3,"t":350},{"v":0,"t":450},{"v":1,"t":175},{"v":1,"t":350},{"v":2,"t":175},{"v":2,"t":350},{"v":1,"t":175},{"v":5,"t":350},{"v":0,"t":450},{"v":5,"t":175},{"v":5,"t":350},{"v":6,"t":175},{"v":6,"t":350},{"v":5,"t":175},{"v":"1+","t":350},{"v":0,"t":450},{"v":"1+","t":175},{"v":"1+","t":350},{"v":7,"t":175},{"v":6,"t":350},{"v":7,"t":175},{"v":5,"t":350},{"v":0,"t":450},{"v":5,"t":175},{"v":5,"t":350},{"v":3,"t":175},{"v":3,"t":350},{"v":2,"t":175},{"v":1,"t":350},{"v":0,"t":450},{"v":1,"t":175},{"v":1,"t":350},{"v":2,"t":175},{"v":2,"t":350},{"v":1,"t":175},{"v":3,"t":350},{"v":5,"t":175},{"v":5,"t":450},{"v":3,"t":175},{"v":1,"t":350},{"v":1,"t":450},{"v":1,"t":175},{"v":2,"t":350},{"v":2,"t":200},{"v":2,"t":200},{"v":2,"t":350},{"v":1,"t":200},{"v":1,"t":350},{"v":"6-","t":200},{"v":3,"t":350},{"v":2,"t":350}];
+
+             let ind = 0;
+
+             const ddd = () => {
+                if(ind >= playList.length){
+                    return 0;
+                }
+                setTimeout(() => {
+                    let num = mucToBtn[`${playList[ind].v}`];
+                    console.log(playList[ind].v)
+                    if(num !== 100) {
+                        pianoBtn[num].dispatchEvent(evt);
+                    }
+                    console.log(num);
+                    ind++;
+                    ddd();
+                }, playList[ind].t);
+             }
+
+             ddd();
+          }
+      }
+      
+  </script>
 </html>
